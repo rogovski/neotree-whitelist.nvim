@@ -11,7 +11,7 @@ When activated, the plugin uses `fd` to enumerate all subdirectories under the g
 ## Requirements
 
 - [neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim)
-- [`fd`](https://github.com/sharkdp/fd) (must be in `$PATH`)
+- [`fd`](https://github.com/sharkdp/fd) (recommended, falls back to `find` if not available)
 
 ## Installation
 

@@ -49,7 +49,14 @@ function M.update(dir)
 	dir = dir:gsub("/$", "")
 
 	print("Wait!")
-	local cmd = string.format("fd --type d --absolute-path %s", vim.fn.shellescape(dir))
+	local cmd
+	if vim.fn.executable("fd") == 1 then
+		-- print("using fd")
+		cmd = string.format("fd --type d --absolute-path %s", vim.fn.shellescape(dir))
+	else
+		-- print("using find")
+		cmd = string.format("find . -type d -name %s -exec realpath {} +", vim.fn.shellescape(dir))
+	end
 	local handle = io.popen(cmd)
 	local result = handle:read("*a")
 	handle:close()
