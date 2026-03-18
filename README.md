@@ -32,7 +32,6 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 -- THIS PLUGIN
 {
   'rogovski/neotree-whitelist.nvim',
-  dev = true,
   lazy = false,
   dependencies = { 'nvim-neo-tree/neo-tree.nvim' },
   config = function()
