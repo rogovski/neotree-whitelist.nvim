@@ -32,7 +32,7 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 ## Usage
 
 ```
-:UpdateNeotreeWhitelist [dir]
+:NeotreeWhitelist [dir]
 ```
 
 - **`dir`** — absolute or relative path to filter by. Defaults to the current working directory if omitted.
