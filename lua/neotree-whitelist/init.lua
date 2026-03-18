@@ -39,12 +39,15 @@ function M.setup(opts)
 	end
 
 	vim.api.nvim_create_user_command("NeotreeWhitelist", function(cmd_opts)
-		M.update(cmd_opts.args ~= "" and cmd_opts.args or nil)
+		if cmd_opts.args == "" then
+			vim.notify("NeotreeWhitelist: please provide a directory argument", vim.log.levels.WARN)
+			return
+		end
+		M.update(cmd_opts.args)
 	end, { nargs = "?" })
 end
 
 function M.update(dir)
-	dir = dir or vim.fn.getcwd()
 	-- Strip trailing slash from dir if present for consistency
 	dir = dir:gsub("/$", "")
 
