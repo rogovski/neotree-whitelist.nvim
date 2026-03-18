@@ -18,6 +18,18 @@ When activated, the plugin uses `fd` to enumerate all subdirectories under the g
 Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ```lua
+-- neotree
+{
+  'nvim-neo-tree/neo-tree.nvim',
+  branch = 'v3.x',
+  dependencies = {
+    'nvim-lua/plenary.nvim',
+    'MunifTanjim/nui.nvim',
+    'nvim-tree/nvim-web-devicons', -- optional, but recommended
+  },
+  lazy = false, -- neo-tree will lazily load itself
+},
+-- THIS PLUGIN
 {
   'rogovski/neotree-whitelist.nvim',
   dev = true,
