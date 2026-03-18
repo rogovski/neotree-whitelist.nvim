@@ -1,0 +1,16 @@
+# Editor
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Neovim
+doc/tags
+
+# Testing
+.tests/
+deps/
+
+# Luarocks
+*.rock
+luarocks/
