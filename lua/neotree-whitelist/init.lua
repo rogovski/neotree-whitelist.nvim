@@ -48,7 +48,6 @@ function M.update(dir)
 	-- Strip trailing slash from dir if present for consistency
 	dir = dir:gsub("/$", "")
 
-	print("Wait!")
 	local cmd
 	if vim.fn.executable("fd") == 1 then
 		-- print("using fd")
@@ -87,7 +86,7 @@ function M.update(dir)
 	M._state.subtrees = new_subtrees
 	M._state.active = true
 	require("neo-tree.sources.manager").refresh("filesystem")
-	print("Neo-tree whitelist updated!")
+	vim.notify("Neo-tree whitelist updated!")
 end
 
 return M
