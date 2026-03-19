@@ -12,6 +12,7 @@ When activated, the plugin uses `fd` to enumerate all subdirectories under the g
 
 - [neo-tree.nvim](https://github.com/nvim-neo-tree/neo-tree.nvim)
 - [`fd`](https://github.com/sharkdp/fd) (recommended, falls back to `find` if not available)
+- [nui.nvim](https://github.com/MunifTanjim/nui.nvim) (optional, required for the popup UI)
 
 ## Installation
 
@@ -42,17 +43,35 @@ Using [lazy.nvim](https://github.com/folke/lazy.nvim):
 
 ## Usage
 
+### Commands
+
+| Command | Description |
+|---|---|
+| `:NeotreeWhitelist <pattern>` | Set a single whitelist pattern (clears any existing patterns) |
+| `:NeotreeWhitelistAdd <pattern>` | Add a pattern to the whitelist |
+| `:NeotreeWhitelistRemove <pattern>` | Remove a pattern from the whitelist |
+| `:NeotreeWhitelistClear` | Clear all patterns and restore the full tree |
+| `:NeotreeWhitelistList` | Print all active patterns |
+| `:NeotreeWhitelistShow` | Open a popup to manage patterns (requires nui.nvim) |
+
+### Multi-pattern support
+
+You can maintain multiple whitelist patterns at once. Each pattern is matched independently and results are merged, so directories matching any pattern will be visible.
+
 ```
-:NeotreeWhitelist [dir_pattern]
+:NeotreeWhitelistAdd borders
+:NeotreeWhitelistAdd ^config
 ```
 
-- **`dir_pattern`** — pattern of the directory name to filter by.
+### Visual indicator
 
-All directories outside the subtree rooted at `dir_pattern` will be hidden in the neo-tree filesystem panel. Run the command with `.` to clear the whitelist
+When filtering is active, a `[Whitelist: <pattern>]` or `[Whitelist: N patterns]` label appears on the root node of the neo-tree filesystem panel.
 
-## Notes
+### Popup UI
 
-this is still rough around the edges and will throw errors lol for certain patterns passed as input (`:NeotreeWhitelist *`). these things should work though:
+`:NeotreeWhitelistShow` opens an editable floating popup listing one pattern per line. Edit the buffer like normal text — add, remove, or reorder lines — then press `q`, `<Esc>`, or `<CR>` to save and close. Empty lines are ignored.
 
-- `:NeotreeWhitelist ^foo`: dirs that start with 'foo'
-- `:NeotreeWhitelist something`: dirs that contain 'something'
+### Pattern examples
+
+- `:NeotreeWhitelist ^foo` — dirs that start with "foo"
+- `:NeotreeWhitelist something` — dirs that contain "something"
