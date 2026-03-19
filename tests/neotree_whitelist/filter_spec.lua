@@ -2,7 +2,7 @@ local M = require("neotree-whitelist")
 
 describe("whitelist filter logic", function()
 	before_each(function()
-		M._state = { active = false, paths = {}, subtrees = {} }
+		M._state = { active = false, patterns = {}, paths = {}, subtrees = {} }
 	end)
 
 	describe("when inactive", function()
