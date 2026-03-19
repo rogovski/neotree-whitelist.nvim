@@ -47,43 +47,59 @@ function M.setup(opts)
 	end, { nargs = "?" })
 end
 
-function M.update(dir)
-	-- Strip trailing slash from dir if present for consistency
-	dir = dir:gsub("/$", "")
-
-	local cmd
+-- Build the shell command to find directories matching a regex pattern.
+-- fd matches against directory names by default; the find fallback uses
+-- grep -E on basenames to get equivalent behaviour.
+function M._build_cmd(pattern)
 	if vim.fn.executable("fd") == 1 then
-		-- print("using fd")
-		cmd = string.format("fd --type d --absolute-path %s", vim.fn.shellescape(dir))
+		return string.format("fd --type d --absolute-path %s", vim.fn.shellescape(pattern))
 	else
-		-- print("using find")
-		cmd = string.format("find . -type d -name %s -exec realpath {} +", vim.fn.shellescape(dir))
+		-- Pipe through grep -E on the basename so we get regex matching like fd
+		return string.format(
+			"find . -type d | while IFS= read -r d; do "
+				.. "basename \"$d\" | grep -qE %s && realpath \"$d\"; "
+				.. "done",
+			vim.fn.shellescape(pattern)
+		)
 	end
-	local handle = io.popen(cmd)
-	local result = handle:read("*a")
-	handle:close()
+end
 
+-- Parse shell output into paths and subtrees lookup tables.
+-- Returns new_paths, new_subtrees.
+function M._parse_results(output)
 	local new_paths = {}
 	local new_subtrees = {}
-	-- Always include the root directory itself
-	new_paths[dir] = true
 
-	for line in result:gmatch("[^\r\n]+") do
+	for line in output:gmatch("[^\r\n]+") do
 		local path = line:gsub("/$", "") -- Strip trailing slash from fd output
 
 		-- Mark this matched directory as a subtree root (all children are visible)
 		new_subtrees[path] = true
 
-		-- Add the path and all its parents up to the dir
+		-- Add the path and all its parents so the tree remains navigable
 		local current = path
-		while current and #current >= #dir do
+		while current and current ~= "/" and current ~= "." do
 			new_paths[current] = true
 			current = vim.fn.fnamemodify(current, ":h")
-			if current == "/" or current == "." then
-				break
-			end
 		end
 	end
+
+	return new_paths, new_subtrees
+end
+
+function M.update(pattern)
+	-- Strip trailing slash for consistency
+	pattern = pattern:gsub("/$", "")
+
+	local cmd = M._build_cmd(pattern)
+	local result = vim.fn.system(cmd)
+
+	if vim.v.shell_error ~= 0 then
+		vim.notify("NeotreeWhitelist: invalid pattern or command error", vim.log.levels.ERROR)
+		return
+	end
+
+	local new_paths, new_subtrees = M._parse_results(result)
 
 	M._state.paths = new_paths
 	M._state.subtrees = new_subtrees
